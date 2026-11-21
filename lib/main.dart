@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
+// Entry point for the tip calculator app.
 void main() => runApp(const TipApp());
 
+// Root widget setting up the pink theme and home screen.
 class TipApp extends StatelessWidget {
   const TipApp({super.key});
 
@@ -21,13 +23,16 @@ class TipApp extends StatelessWidget {
   }
 }
 
+// Parses text input into a double, returning null if invalid.
 double? parseBill(String input) => double.tryParse(input.trim());
 
+// Calculates tip amount and total bill for a given percentage.
 ({double tip, double total}) computeTip(double bill, int percent) {
   final tip = bill * percent / 100;
   return (tip: tip, total: bill + tip);
 }
 
+// Main screen for entering bill, picking tip %, and splitting total.
 class TipPage extends StatefulWidget {
   const TipPage({super.key});
 
@@ -36,6 +41,7 @@ class TipPage extends StatefulWidget {
 }
 
 class _TipPageState extends State<TipPage> {
+  // Remembers the last chosen tip % while the app stays open.
   static int _lastTipPercent = 15;
 
   final _billController = TextEditingController();
@@ -48,6 +54,7 @@ class _TipPageState extends State<TipPage> {
     super.dispose();
   }
 
+  // Adjusts split count without dropping below 1 person.
   void _updateSplitCount(int delta) {
     setState(() {
       final next = _splitCount + delta;
@@ -73,6 +80,7 @@ class _TipPageState extends State<TipPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // Bill input field
             TextField(
               controller: _billController,
               keyboardType:
@@ -86,6 +94,7 @@ class _TipPageState extends State<TipPage> {
               },
             ),
             const SizedBox(height: 20),
+            // Tip percentage selector
             SegmentedButton<int>(
               segments: const [
                 ButtonSegment(value: 10, label: Text('10%')),
@@ -101,6 +110,7 @@ class _TipPageState extends State<TipPage> {
               },
             ),
             const SizedBox(height: 20),
+            // Split stepper row
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -111,7 +121,8 @@ class _TipPageState extends State<TipPage> {
                 Row(
                   children: [
                     IconButton.filledTonal(
-                      onPressed: _splitCount > 1 ? () => _updateSplitCount(-1) : null,
+                      onPressed:
+                          _splitCount > 1 ? () => _updateSplitCount(-1) : null,
                       icon: const Icon(Icons.remove),
                       tooltip: 'Decrease people',
                     ),
@@ -135,6 +146,7 @@ class _TipPageState extends State<TipPage> {
               ],
             ),
             const SizedBox(height: 30),
+            // Results or error message
             if (parsedBill == null || tipData == null || perPerson == null)
               const Text(
                 'Enter a valid amount',
